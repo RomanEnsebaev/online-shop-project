@@ -1,24 +1,24 @@
-package org.onlineshop.model;
+package org.onlineshop.dto;
+
+import org.onlineshop.model.Product;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Product {
-
-    private Integer productId;
+public class ProductDto {
+    private Integer id;
     private String  name;
     private String  description;
     private BigDecimal price;
     private int stockQty;
-    private boolean active;
     private LocalDateTime createdAt;
 
-    public Integer getProductId() {
-        return productId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -51,14 +51,6 @@ public class Product {
 
     public void setStockQty(int stockQty) {
         this.stockQty = stockQty;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {
