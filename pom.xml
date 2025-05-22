@@ -25,23 +25,23 @@
     </dependency>
 
 
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.security</groupId>-->
-<!--      <artifactId>spring-security-web</artifactId>-->
-<!--      <version>6.2.2</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>6.2.2</version>
+    </dependency>
 
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.security</groupId>-->
-<!--      <artifactId>spring-security-config</artifactId>-->
-<!--      <version>6.2.2</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+      <version>6.2.2</version>
+    </dependency>
 
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.security</groupId>-->
-<!--      <artifactId>spring-security-crypto</artifactId>-->
-<!--      <version>6.2.2</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <version>6.2.2</version>
+    </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
@@ -69,7 +69,7 @@
 
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+      <artifactId>thymeleaf-extras-springsecurity6</artifactId>
       <version>3.1.2.RELEASE</version>
     </dependency>
 
