@@ -1,7 +1,5 @@
 package org.onlineshop.dto;
 
-import org.onlineshop.model.Product;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 

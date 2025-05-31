@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layout}">
 <head><title>Каталог</title></head>
 <body>
 <div layout:fragment="content">
     <h2 class="mb-4">Каталог товаров</h2>
+    <div sec:authorize="hasAuthority('ADMIN')"
+         class="d-flex justify-content-end mb-3">
+        <a class="btn btn-primary" th:href="@{/admin/products/new}">Add product</a>
+    </div>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="p : ${products}">
             <div class="card h-100">
@@ -15,11 +19,57 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <span class="fw-bold" th:text="${#numbers.formatDecimal(p.price,0,'POINT',2,'COMMA')}">0.00</span>
-                    <button class="btn btn-sm btn-primary" disabled>В корзину</button>
+
+                    <p th:class="${p.stockQty > 0} ? 'text-success' : 'text-danger'"
+                       th:text="${p.stockQty > 0} ? 'In stock: ' + ${p.stockQty} : 'Out of stock'"></p>
+
+                    <button class="btn btn-sm btn-outline-primary"
+                            th:disabled="${p.stockQty == 0}"
+                            th:data-id="${p.id}"
+                            th:onclick="addToCart(this)">В корзину
+                    </button>
+
+                    <div sec:authorize="hasAuthority('ADMIN')" class="ms-2">
+
+<!--                        <button type="button"-->
+<!--                                class="btn btn-sm btn-outline-secondary"-->
+<!--                                th:onclick="location.href='@{/admin/products/{id}/edit(id=${p.id})}'">-->
+<!--                            Edit-->
+<!--                        </button>-->
+                        <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" class="btn btn-sm btn-outline-secondary">Edit</a>
+
+                        <button class="btn btn-sm btn-outline-danger"
+                                th:data-id="${p.id}"
+                                th:onclick="deleteProduct(this)">
+                            Delete
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        function addToCart(btn){
+           const id = btn.dataset.id;
+           fetch(`/online-shop/cart/${id}`, {method:'POST'})
+               .then(r => {
+                   if (r.ok) {
+                       btn.classList.remove('btn-primary');
+                       btn.classList.add('btn-success');
+                       btn.textContent = 'Added';
+                   }
+               });
+       }
+
+        function deleteProduct(btn){
+        if (!confirm('Delete product?')) return;
+        const id = btn.dataset.id;
+        fetch(`/online-shop/admin/products/${id}`, {method:'DELETE'})
+            .then(r => { if(r.ok) location.reload(); });
+    }
+    </script>
+
 </div>
 </body>
 </html>

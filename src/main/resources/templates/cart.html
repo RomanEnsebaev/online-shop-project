@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title layout:fragment="title">Cart</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+
+    <h3 class="mb-4">Your cart</h3>
+
+    <!-- Пустая корзина -->
+    <div th:if="${empty}" class="alert alert-info">Cart is empty</div>
+
+    <!-- Таблица товаров -->
+    <div th:unless="${empty}">
+        <table class="table align-middle">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th class="text-end">Price</th>
+                <th class="text-center">Qty</th>
+                <th class="text-end">Line total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="it, stat : ${items}">
+                <td th:text="${stat.index + 1}">1</td>
+                <td th:text="${it.name}">Item</td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(it.price,1,'POINT',2,'COMMA')}">0.00</td>
+                <td class="text-center" th:text="${it.qty}">1</td>
+                <td class="text-end"
+                    th:text="${#numbers.formatDecimal(it.lineTotal,1,'POINT',2,'COMMA')}">0.00</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr class="fw-bold">
+                <td colspan="4" class="text-end">Total:</td>
+                <td class="text-end"
+                    th:text="${#numbers.formatDecimal(total,1,'POINT',2,'COMMA')}">0.00</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

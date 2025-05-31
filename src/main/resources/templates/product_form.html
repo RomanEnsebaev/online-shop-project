@@ -3,13 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title layout:fragment="title">Новый товар</title>
+    <title th:text="${productDto.id} != null ? 'Редактировать товар' : 'Новый товар'"></title>
 </head>
 
 <body>
 <div layout:fragment="content" class="col-md-6 offset-md-3">
-    <h3>Добавить товар</h3>
-    <form th:action="@{/admin/products/save}" th:object="${productDto}" method="post">
+    <h3 th:text="${productDto.id} != null ? 'Редактировать товар' : 'Добавить товар'"></h3>
+    <form th:action="@{${formAction}}" th:object="${productDto}" method="post">
         <div class="mb-3">
             <label class="form-label">Название</label>
             <input class="form-control" th:field="*{name}" required/>

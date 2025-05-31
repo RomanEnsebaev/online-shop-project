@@ -1,38 +1,32 @@
 package org.onlineshop.config;
 
+import org.onlineshop.db.ConnectionPool;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.core.env.Environment;
 
-import javax.sql.DataSource;
+import java.sql.SQLException;
 
 @Configuration
 @PropertySource("classpath:application.properties")
-@ComponentScan(basePackages = "org.onlineshop")
-public class JdbcConfig {
+public class JdbcConfig implements DisposableBean {
+
+    private ConnectionPool pool;
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer pspc() {
-        return new PropertySourcesPlaceholderConfigurer();
+    public ConnectionPool connectionPool(@Value("${jdbc.url}")  String url,
+                                         @Value("${jdbc.user}") String user,
+                                         @Value("${jdbc.pass}") String pass,
+                                         @Value("${pool.size:10}") int size) throws Exception {
+
+        ConnectionPool.init(url, user, pass, size);
+        return ConnectionPool.get();
     }
 
-    @Bean
-    public DataSource dataSource(@Value("${jdbc.url}")  String url,
-                                 @Value("${jdbc.user}") String user,
-                                 @Value("${jdbc.pass}") String pass) {
 
-        DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl(url);
-        ds.setUsername(user);
-        ds.setPassword(pass);
-        return ds;
-    }
-
-    @Bean
-    public JdbcTemplate jdbcTemplate(DataSource ds) {
-        return new JdbcTemplate(ds);
+    @Override
+    public void destroy() throws Exception {
+        ConnectionPool.get().closeAll();
     }
 }

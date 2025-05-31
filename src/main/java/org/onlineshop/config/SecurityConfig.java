@@ -1,52 +1,60 @@
 package org.onlineshop.config;
 
+import org.onlineshop.db.ConnectionPool;
+import org.onlineshop.db.CustomUserDetailsService;
 import org.springframework.context.annotation.*;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import javax.sql.DataSource;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+
+    private final ConnectionPool pool;
+
+    public SecurityConfig(ConnectionPool pool) {
+        this.pool = pool;
     }
 
     @Bean
-    public JdbcUserDetailsManager userDetailsManager(DataSource ds) {
-        JdbcUserDetailsManager mgr = new JdbcUserDetailsManager(ds);
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+        return new HandlerMappingIntrospector();
+    }
 
-        mgr.setUsersByUsernameQuery(
-                "SELECT username, password, (deleted_at IS NULL) AS enabled FROM users WHERE username = ?");
-        mgr.setAuthoritiesByUsernameQuery(
-                "SELECT username, role FROM users WHERE username = ?");
-
-        return mgr;
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new CustomUserDetailsService(pool);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        DaoAuthenticationProvider dao = new DaoAuthenticationProvider();
+        dao.setUserDetailsService(new CustomUserDetailsService(pool));
+        dao.setPasswordEncoder(encoder());
+
         http
-                .csrf(Customizer.withDefaults())
+                .authenticationProvider(dao)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/register", "/login",
+                        .requestMatchers("/", "/cart", "/register", "/login",
                                 "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")            // our own page
+                        .loginPage("/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
@@ -58,5 +66,10 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
     }
 }

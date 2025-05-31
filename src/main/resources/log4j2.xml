@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Appenders>
+
+        <RollingFile name="SEC"
+                     fileName="${sys:catalina.base}/logs/security-trace.log"
+                     filePattern="${sys:catalina.base}/logs/security-trace-%d{yyyy-MM-dd}-%i.log.gz"
+                     append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5p %c{1} - %m%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="5 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} %-5p %c{1} - %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+
+        <Logger name="org.springframework.security" level="DEBUG" additivity="false">
+            <AppenderRef ref="SEC"/>
+        </Logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>
