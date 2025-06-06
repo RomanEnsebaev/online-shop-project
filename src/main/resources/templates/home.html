@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
       layout:decorate="~{layout}">
 <head><title>Каталог</title></head>
 <body>
@@ -31,11 +32,6 @@
 
                     <div sec:authorize="hasAuthority('ADMIN')" class="ms-2">
 
-<!--                        <button type="button"-->
-<!--                                class="btn btn-sm btn-outline-secondary"-->
-<!--                                th:onclick="location.href='@{/admin/products/{id}/edit(id=${p.id})}'">-->
-<!--                            Edit-->
-<!--                        </button>-->
                         <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" class="btn btn-sm btn-outline-secondary">Edit</a>
 
                         <button class="btn btn-sm btn-outline-danger"

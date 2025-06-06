@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title layout:fragment="title">Мои заказы</title>
+</head>
+<body>
+<main layout:fragment="content" class="container my-4">
+
+    <h2>Мои заказы</h2>
+
+    <div th:if="${orders.isEmpty()}">
+        <p>У вас ещё нет оформленных заказов.</p>
+    </div>
+
+    <div th:each="order : ${orders}">
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Заказ №<span th:text="${order.id}"></span></strong>
+                <span>, дата:
+                    <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
+                </span>
+            </div>
+            <div class="card-body p-0 border border-2">
+                <table class="table table-striped mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Наименование</th>
+                        <th class="text-center">Количество</th>
+                        <th class="text-end">Цена ₸/шт.</th>
+                        <th class="text-end">Сумма ₸</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${order.items}">
+                        <td th:text="${item.productName}">Название товара</td>
+                        <td class="text-center" th:text="${item.quantity}"></td>
+                        <td class="text-end"
+                            th:text="${#numbers.formatDecimal(item.price, 2, 2, 'COMMA')}">
+                        </td>
+                        <td class="text-end"
+                            th:text="${#numbers.formatDecimal(item.price * item.quantity, 2, 2, 'COMMA')}">
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot class="table-light">
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Итого:</td>
+                        <td class="text-end fw-bold"
+                            th:text="${#numbers.formatDecimal(order.total, 2, 2, 'COMMA')}">
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+    </div>
+
+</main>
+</body>
+</html>

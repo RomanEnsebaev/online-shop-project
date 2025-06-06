@@ -1,5 +1,7 @@
 package org.onlineshop.db;
 
+import jakarta.annotation.PreDestroy;
+
 import java.sql.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -46,6 +48,7 @@ public class ConnectionPool {
 
     public void release(Connection c) { queue.offer(c); }
 
+    @PreDestroy
     public void closeAll() throws SQLException {
         for (Connection c : queue) c.close();
     }

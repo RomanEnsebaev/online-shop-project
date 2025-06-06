@@ -121,4 +121,21 @@ public class CartDao {
             ps.executeUpdate();
         } finally { pool.release(c); }
     }
+
+    public void clearCartByUserId(int userId) throws SQLException, InterruptedException {
+        String sql = "DELETE FROM cart_items WHERE cart_id = (SELECT cart_id FROM carts WHERE user_id = ?)";
+        Connection c = pool.borrow();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        } finally {
+            pool.release(c);
+        }
+    }
+
+    public List<CartItemDto> getCartItemsByUserId(int userId)
+            throws SQLException, InterruptedException {
+        int cartId = resolveCart(userId, null);
+        return items(cartId);
+    }
 }

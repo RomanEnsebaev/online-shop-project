@@ -7,6 +7,7 @@ import org.onlineshop.db.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -61,4 +62,11 @@ public class CartService {
         }
         return token;
     }
+
+    public void clearCart(int userId) throws SQLException, InterruptedException{
+            dao.clearCartByUserId(userId);
+            session.setAttribute("cartCount", 0);
+    }
+
+
 }

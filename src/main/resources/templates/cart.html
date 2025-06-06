@@ -1,51 +1,76 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
-    <title layout:fragment="title">Cart</title>
+    <meta charset="UTF-8"/>
+    <title layout:fragment="title">Корзина</title>
 </head>
-
 <body>
-<div layout:fragment="content">
+<main layout:fragment="content" class="container my-4">
 
-    <h3 class="mb-4">Your cart</h3>
+    <h3 class="mb-4">Ваша корзина</h3>
 
-    <!-- Пустая корзина -->
-    <div th:if="${empty}" class="alert alert-info">Cart is empty</div>
+    <div th:if="${empty}" class="alert alert-info">
+        Корзина пуста
+    </div>
 
-    <!-- Таблица товаров -->
     <div th:unless="${empty}">
+
         <table class="table align-middle">
             <thead>
             <tr>
                 <th>#</th>
-                <th>Product</th>
-                <th class="text-end">Price</th>
-                <th class="text-center">Qty</th>
-                <th class="text-end">Line total</th>
+                <th>Товар</th>
+                <th class="text-end">Цена</th>
+                <th class="text-center">Кол-во</th>
+                <th class="text-end">Сумма</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="it, stat : ${items}">
                 <td th:text="${stat.index + 1}">1</td>
-                <td th:text="${it.name}">Item</td>
-                <td class="text-end" th:text="${#numbers.formatDecimal(it.price,1,'POINT',2,'COMMA')}">0.00</td>
+                <td th:text="${it.name}">Название товара</td>
+                <td class="text-end"
+                    th:text="${#numbers.formatDecimal(it.price, 1, 'POINT', 2, 'COMMA')}">
+                    0.00
+                </td>
                 <td class="text-center" th:text="${it.qty}">1</td>
                 <td class="text-end"
-                    th:text="${#numbers.formatDecimal(it.lineTotal,1,'POINT',2,'COMMA')}">0.00</td>
+                    th:text="${#numbers.formatDecimal(it.lineTotal, 1, 'POINT', 2, 'COMMA')}">
+                    0.00
+                </td>
             </tr>
             </tbody>
             <tfoot>
             <tr class="fw-bold">
-                <td colspan="4" class="text-end">Total:</td>
+                <td colspan="4" class="text-end">Итого:</td>
                 <td class="text-end"
-                    th:text="${#numbers.formatDecimal(total,1,'POINT',2,'COMMA')}">0.00</td>
+                    th:text="${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">
+                    0.00
+                </td>
             </tr>
             </tfoot>
         </table>
+
+        <div class="mt-4">
+            <form th:action="@{/cart/clear}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-outline-danger me-2">
+                    Очистить корзину
+                </button>
+            </form>
+
+            <form th:action="@{/orders/create}" method="post"
+                  sec:authorize="isAuthenticated()" style="display: inline; margin-left: 10px;">
+                <button type="submit" class="btn btn-primary">
+                    Оформить заказ
+                </button>
+            </form>
+        </div>
+
     </div>
 
-</div>
+</main>
 </body>
 </html>
