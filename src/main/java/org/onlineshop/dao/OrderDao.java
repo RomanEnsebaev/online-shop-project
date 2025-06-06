@@ -1,8 +1,8 @@
 package org.onlineshop.dao;
 
 import org.onlineshop.db.ConnectionPool;
-import org.onlineshop.dto.OrderDto;
-import org.onlineshop.dto.OrderItemDto;
+import org.onlineshop.dto.order.OrderDto;
+import org.onlineshop.dto.order.OrderItemDto;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -50,13 +50,15 @@ public class OrderDao {
         } finally { pool.release(c); }
     }
 
-    public List<OrderDto> findOrderHeadersByUserId(int userId) throws SQLException, InterruptedException {
-        String sql = "SELECT order_id, created_at, total FROM orders WHERE user_id = ? ORDER BY created_at DESC";
+    public List<OrderDto> findOrderHeadersByUserId(int userId, int limit, int offset) throws SQLException, InterruptedException {
+        String sql = "SELECT order_id, created_at, total FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
         List<OrderDto> headers = new ArrayList<>();
 
         Connection c = pool.borrow();
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, userId);
+            ps.setInt(2, limit);
+            ps.setInt(3, offset);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     OrderDto header = new OrderDto();

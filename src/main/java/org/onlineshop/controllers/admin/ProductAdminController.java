@@ -1,4 +1,4 @@
-package org.onlineshop.controllers;
+package org.onlineshop.controllers.admin;
 
 import jakarta.validation.Valid;
 import org.onlineshop.dto.ProductDto;

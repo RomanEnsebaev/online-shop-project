@@ -4,8 +4,9 @@ import org.onlineshop.dao.CartDao;
 import org.onlineshop.dao.OrderDao;
 import org.onlineshop.db.CustomUserDetails;
 import org.onlineshop.dto.CartItemDto;
-import org.onlineshop.dto.OrderDto;
-import org.onlineshop.dto.OrderItemDto;
+import org.onlineshop.dto.order.OrderDto;
+import org.onlineshop.dto.order.OrderItemDto;
+import org.onlineshop.dto.order.OrderPageDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -66,15 +67,35 @@ public class OrderService {
         cartService.clearCart(userId);
     }
 
-    public List<OrderDto> getOrdersForCurrentUser() throws SQLException, InterruptedException {
+    public OrderPageDto  getOrdersForCurrentUser(int pageNum, int pageSize) throws SQLException, InterruptedException {
         int userId = getCurrentUserId();
 
-        List<OrderDto> headers = orderDao.findOrderHeadersByUserId(userId);
+        int totalOrders = orderDao.countOrdersByUserId(userId);
+
+        int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+        if (totalPages < 1) {
+            totalPages = 1;
+        }
+        if (pageNum < 1) {
+            pageNum = 1;
+        } else if (pageNum > totalPages) {
+            pageNum = totalPages;
+        }
+
+        int offset = (pageNum - 1) * pageSize;
+
+        List<OrderDto> headers = orderDao.findOrderHeadersByUserId(userId, pageSize, offset);
 
         for (OrderDto header : headers) {
             List<OrderItemDto> items = orderDao.findOrderItemsByOrderId(header.getId());
             header.setItems(items);
         }
-        return headers;
+
+        OrderPageDto pageDto = new OrderPageDto();
+        pageDto.setOrders(headers);
+        pageDto.setCurrentPage(pageNum);
+        pageDto.setTotalPages(totalPages);
+
+        return pageDto;
     }
 }

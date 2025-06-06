@@ -10,11 +10,11 @@
 
     <h2>Мои заказы</h2>
 
-    <div th:if="${orders.isEmpty()}">
+    <div th:if="${pageDto.orders.isEmpty()}">
         <p>У вас ещё нет оформленных заказов.</p>
     </div>
 
-    <div th:each="order : ${orders}">
+    <div th:each="order : ${pageDto.orders}">
         <div class="card mb-4">
             <div class="card-header">
                 <strong>Заказ №<span th:text="${order.id}"></span></strong>
@@ -54,8 +54,30 @@
                     </tfoot>
                 </table>
             </div>
+        </div>
     </div>
+    <nav th:if="${pageDto.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${pageDto.currentPage == 1} ? 'disabled'">
+                <a class="page-link bg-dark text-white border-secondary"
+                   th:href="@{/orders(page=${pageDto.currentPage - 1})}"
+                   tabindex="-1"><</a>
+            </li>
 
+            <li class="page-item"
+                th:each="pageNum : ${#numbers.sequence(1, pageDto.totalPages)}"
+                th:classappend="${pageNum == pageDto.currentPage} ? 'active'">
+                <a class="page-link bg-dark text-white border-secondary"
+                   th:href="@{/orders(page=${pageNum})}"
+                   th:text="${pageNum}">1</a>
+            </li>
+
+            <li class="page-item" th:classappend="${pageDto.currentPage == pageDto.totalPages} ? 'disabled'">
+                <a class="page-link bg-dark text-white border-secondary"
+                   th:href="@{/orders(page=${pageDto.currentPage + 1})}">></a>
+            </li>
+        </ul>
+    </nav>
 </main>
 </body>
 </html>
