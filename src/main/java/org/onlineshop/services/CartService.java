@@ -67,6 +67,4 @@ public class CartService {
             dao.clearCartByUserId(userId);
             session.setAttribute("cartCount", 0);
     }
-
-
 }

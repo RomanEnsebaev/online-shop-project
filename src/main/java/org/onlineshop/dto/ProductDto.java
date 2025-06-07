@@ -9,10 +9,20 @@ public class ProductDto {
     private String  description;
     private BigDecimal price;
     private int stockQty;
+    private boolean active;
     private LocalDateTime createdAt;
+
 
     public Integer getId() {
         return id;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void setId(Integer id) {

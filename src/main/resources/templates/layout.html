@@ -34,13 +34,40 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/changeLanguage(lang='ru')}" th:text="#{layout.lang.ru}">Русский</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/changeLanguage(lang='en')}" th:text="#{layout.lang.en}">English</a>
 
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                   href="#"
+                   id="langDropdown"
+                   role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    <span th:switch="${#locale.language}">
+                        <span th:case="'ru'" th:text="#{layout.lang.ru}">Русский</span>
+                        <span th:case="'en'" th:text="#{layout.lang.en}">English</span>
+                    </span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+                    <li>
+                        <a class="dropdown-item"
+                           th:href="@{/changeLanguage(lang='ru')}"
+                           th:text="#{layout.lang.ru}">Русский</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item"
+                           th:href="@{/changeLanguage(lang='en')}"
+                           th:text="#{layout.lang.en}">English</a>
+                    </li>
+                </ul>
             </li>
+
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link" th:href="@{/changeLanguage(lang='ru')}" th:text="#{layout.lang.ru}">Русский</a>-->
+            <!--            </li>-->
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link" th:href="@{/changeLanguage(lang='en')}" th:text="#{layout.lang.en}">English</a>-->
+
+            <!--            </li>-->
 
             <li class="nav-item" sec:authorize="isAnonymous()">
                 <a class="nav-link" th:href="@{/login}" th:text="#{layout.login}">Login</a>
