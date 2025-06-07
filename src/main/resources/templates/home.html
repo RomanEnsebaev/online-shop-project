@@ -6,10 +6,10 @@
 <head><title>Каталог</title></head>
 <body>
 <div layout:fragment="content">
-    <h2 class="mb-4">Каталог товаров</h2>
+    <h2 class="mb-4" th:text="#{home.header}">Каталог товаров</h2>
     <div sec:authorize="hasAuthority('ADMIN')"
          class="d-flex justify-content-end mb-3">
-        <a class="btn btn-primary" th:href="@{/admin/products/new}">Add product</a>
+        <a class="btn btn-primary" th:href="@{/admin/products/new}" th:text="#{home.button.addProduct}">Добавить товар</a>
     </div>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="p : ${products}">
@@ -21,23 +21,26 @@
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <span class="fw-bold" th:text="${#numbers.formatDecimal(p.price,0,'POINT',2,'COMMA')}">0.00</span>
 
-                    <p th:class="${p.stockQty > 0} ? 'text-success' : 'text-danger'"
-                       th:text="${p.stockQty > 0} ? 'In stock: ' + ${p.stockQty} : 'Out of stock'"></p>
+<!--                    <p th:class="${p.stockQty > 0} ? 'text-success' : 'text-danger'"-->
+<!--                       th:text="${p.stockQty > 0} ? 'In stock: ' + ${p.stockQty} : 'Out of stock'"></p>-->
 
                     <button class="btn btn-sm btn-outline-primary"
                             th:disabled="${p.stockQty == 0}"
                             th:data-id="${p.id}"
-                            th:onclick="addToCart(this)">В корзину
+                            th:onclick="addToCart(this)"
+                            th:text="#{home.button.addToCart}">В корзину
                     </button>
 
                     <div sec:authorize="hasAuthority('ADMIN')" class="ms-2">
 
-                        <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a th:href="@{/admin/products/{id}/edit(id=${p.id})}"
+                           class="btn btn-sm btn-outline-secondary"
+                           th:text="#{home.button.edit}">Редактировать</a>
 
                         <button class="btn btn-sm btn-outline-danger"
                                 th:data-id="${p.id}"
-                                th:onclick="deleteProduct(this)">
-                            Delete
+                                th:onclick="deleteProduct(this)"
+                                th:text="#{home.button.delete}">Удалить
                         </button>
                     </div>
                 </div>

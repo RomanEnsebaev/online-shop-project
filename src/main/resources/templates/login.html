@@ -2,28 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-<head><title layout:fragment="title">Login</title></head>
+<head><title layout:fragment="title" th:text="#{login.title}">Вход</title></head>
 <body>
 <div layout:fragment="content" class="col-md-4 offset-md-4">
-    <h3 class="text-center mb-3">Login</h3>
+    <h3 class="text-center mb-3" th:text="#{login.header}">Вход</h3>
 
-    <div class="alert alert-success" th:if="${msg}" th:text="${msg}"></div>
-    <div class="alert alert-danger"  th:if="${param.error}">Invalid credentials</div>
+    <div class="alert alert-success" th:if="${msg}"
+         th:text="${msg}"></div>
+    <div class="alert alert-danger"  th:if="${param.error}"
+         th:text="#{login.error.invalid}">Invalid credentials</div>
 
     <form th:action="@{/login}" method="post">
         <div class="mb-3">
-            <label class="form-label">Username</label>
+            <label class="form-label" th:text="#{login.label.username}">Логин</label>
             <input class="form-control" type="text" name="username" required/>
         </div>
         <div class="mb-3">
-            <label class="form-label">Password</label>
+            <label class="form-label" th:text="#{login.label.password}">Пароль</label>
             <input class="form-control" type="password" name="password" required/>
         </div>
-        <button class="btn btn-primary w-100">Log in</button>
+        <button class="btn btn-primary w-100" th:text="#{login.button.login}">Войти</button>
     </form>
 
     <div class="text-center mt-3">
-        <a th:href="@{/register}">New user? Register</a>
+        <a th:href="@{/register}" th:text="#{login.link.register}">Новый пользователь? Зарегистрироваться</a>
     </div>
 </div>
 </body>

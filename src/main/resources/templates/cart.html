@@ -5,15 +5,15 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8"/>
-    <title layout:fragment="title">Корзина</title>
+    <title layout:fragment="title" th:text="#{cart.title}">Корзина</title>
 </head>
 <body>
 <main layout:fragment="content" class="container my-4">
 
-    <h3 class="mb-4">Ваша корзина</h3>
+    <h3 class="mb-4" th:text="#{cart.header}">Ваша корзина</h3>
 
     <div th:if="${empty}" class="alert alert-info">
-        Корзина пуста
+        <span th:text="#{cart.empty}"> Корзина пуста </span>
     </div>
 
     <div th:unless="${empty}">
@@ -22,10 +22,10 @@
             <thead>
             <tr>
                 <th>#</th>
-                <th>Товар</th>
-                <th class="text-end">Цена</th>
-                <th class="text-center">Кол-во</th>
-                <th class="text-end">Сумма</th>
+                <th th:text="#{cart.column.product}">Товар</th>
+                <th class="text-end" th:text="#{cart.column.price}">Цена</th>
+                <th class="text-center" th:text="#{cart.column.quantity}">Количество</th>
+                <th class="text-end" th:text="#{cart.column.total}">Сумма</th>
             </tr>
             </thead>
             <tbody>
@@ -45,7 +45,7 @@
             </tbody>
             <tfoot>
             <tr class="fw-bold">
-                <td colspan="4" class="text-end">Итого:</td>
+                <td colspan="4" class="text-end" th:text="#{cart.footer.total}">Итого:</td>
                 <td class="text-end"
                     th:text="${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">
                     0.00
@@ -56,14 +56,14 @@
 
         <div class="mt-4">
             <form th:action="@{/cart/clear}" method="post" style="display: inline;">
-                <button type="submit" class="btn btn-outline-danger me-2">
+                <button type="submit" class="btn btn-outline-danger me-2" th:text="#{cart.button.clear}">
                     Очистить корзину
                 </button>
             </form>
 
             <form th:action="@{/orders/create}" method="post"
                   sec:authorize="isAuthenticated()" style="display: inline; margin-left: 10px;">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" th:text="#{cart.button.placeOrder}">
                     Оформить заказ
                 </button>
             </form>

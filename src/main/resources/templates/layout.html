@@ -19,7 +19,7 @@
 
         <ul class="navbar-nav">
             <li class="nav-item" sec:authorize="isAuthenticated()">
-                <a class="nav-link" th:href="@{/orders}">Заказы</a>
+                <a class="nav-link" th:href="@{/orders}" th:text="#{layout.orders}">Заказы</a>
             </li>
         </ul>
 
@@ -34,15 +34,24 @@
                 </a>
             </li>
 
-            <li class="nav-item" sec:authorize="isAnonymous()">
-                <a class="nav-link" th:href="@{/login}">Login</a>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/changeLanguage(lang='ru')}" th:text="#{layout.lang.ru}">Русский</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/changeLanguage(lang='en')}" th:text="#{layout.lang.en}">English</a>
+
+            </li>
+
             <li class="nav-item" sec:authorize="isAnonymous()">
-                <a class="nav-link" th:href="@{/register}">Register</a>
+                <a class="nav-link" th:href="@{/login}" th:text="#{layout.login}">Login</a>
+            </li>
+
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{/register}" th:text="#{layout.register}">Register</a>
             </li>
 
             <li class="nav-item" sec:authorize="isAuthenticated()">
-                <a class="nav-link" th:href="@{/logout}">Logout</a>
+                <a class="nav-link" th:href="@{/logout}" th:text="#{layout.logout}">Logout</a>
             </li>
 
         </ul>
