@@ -6,11 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.CartDao;
 import org.onlineshop.dao.OrderDao;
-import org.onlineshop.db.CustomUserDetails;
+import org.onlineshop.config.CustomUserDetails;
 import org.onlineshop.dto.CartItemDto;
-import org.onlineshop.dto.order.OrderDto;
-import org.onlineshop.dto.order.OrderItemDto;
-import org.onlineshop.dto.order.OrderPageDto;
+import org.onlineshop.dto.OrderDto;
+import org.onlineshop.dto.OrderItemDto;
+import org.onlineshop.dto.OrderPageDto;
+import org.onlineshop.model.CartItem;
+import org.onlineshop.model.Order;
+import org.onlineshop.model.OrderItem;
 import org.onlineshop.services.CartService;
 import org.onlineshop.services.OrderService;
 import org.springframework.security.core.Authentication;
@@ -22,7 +25,6 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,7 +83,7 @@ class OrderServiceTest {
     void shouldSaveOrderAndClearCartWhenCartHasItems() throws Exception {
         var sc = mockSecurityContext(5);
 
-        CartItemDto ci = new CartItemDto();
+        CartItem ci = new CartItem();
         ci.setProductId(2);
         ci.setName("n");
         ci.setQty(3);
@@ -121,11 +123,13 @@ class OrderServiceTest {
     void shouldReturnCorrectPageWhenOrdersExist() throws Exception {
         var sc = mockSecurityContext(3);
         when(orderDao.countOrdersByUserId(3)).thenReturn(5);
-        OrderDto h1 = new OrderDto(); h1.setId(10);
-        OrderDto h2 = new OrderDto(); h2.setId(11);
+        Order h1 = new Order();
+        h1.setId(10);
+        Order h2 = new Order();
+        h2.setId(11);
         when(orderDao.findOrderHeadersByUserId(3, 2, 4)).thenReturn(List.of(h1, h2));
 
-        OrderItemDto item1 = new OrderItemDto();
+        OrderItem item1 = new OrderItem();
         item1.setProductId(1);
         item1.setProductName("n");
         item1.setQuantity(1);

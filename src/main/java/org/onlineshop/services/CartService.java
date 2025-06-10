@@ -3,11 +3,12 @@ package org.onlineshop.services;
 import jakarta.servlet.http.HttpSession;
 import org.onlineshop.dao.CartDao;
 import org.onlineshop.dto.CartItemDto;
-import org.onlineshop.db.CustomUserDetails;
+import org.onlineshop.config.CustomUserDetails;
+import org.onlineshop.dto.mappers.CartItemMapper;
+import org.onlineshop.model.CartItem;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -34,8 +35,10 @@ public class CartService {
 
     public List<CartItemDto> viewCart() throws SQLException, InterruptedException {
         int id = dao.resolveCart(currentUserId(), guestToken());
-        return dao.items(id);
-
+        List<CartItem> items = dao.items(id);
+        return items.stream()
+                .map(CartItemMapper::toDto)
+                .toList();
     }
 
     public void mergeAfterLogin() throws SQLException, InterruptedException {
@@ -63,8 +66,8 @@ public class CartService {
         return token;
     }
 
-    public void clearCart(int userId) throws SQLException, InterruptedException{
-            dao.clearCartByUserId(userId);
-            session.setAttribute("cartCount", 0);
+    public void clearCart(int userId) throws SQLException, InterruptedException {
+        dao.clearCartByUserId(userId);
+        session.setAttribute("cartCount", 0);
     }
 }

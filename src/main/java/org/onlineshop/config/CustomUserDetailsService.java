@@ -1,4 +1,4 @@
-package org.onlineshop.db;
+package org.onlineshop.config;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

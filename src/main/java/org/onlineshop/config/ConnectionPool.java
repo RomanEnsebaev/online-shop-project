@@ -1,4 +1,4 @@
-package org.onlineshop.db;
+package org.onlineshop.config;
 
 import jakarta.annotation.PreDestroy;
 

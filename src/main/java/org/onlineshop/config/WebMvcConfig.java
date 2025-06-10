@@ -1,5 +1,6 @@
 package org.onlineshop.config;
 
+import jakarta.servlet.http.HttpSessionListener;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
@@ -22,6 +23,9 @@ import java.util.Locale;
 @ComponentScan(basePackages = "org.onlineshop")
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
+
+
+
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
@@ -63,8 +67,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public CookieLocaleResolver localeResolver() {
         CookieLocaleResolver resolver = new CookieLocaleResolver();
         resolver.setDefaultLocale(new Locale("ru"));
-        resolver.setCookieName("locale");
-        resolver.setCookieMaxAge(3600);
+//        resolver.setCookieName("locale");
+//        resolver.setCookieMaxAge(3600);
         return resolver;
     }
 

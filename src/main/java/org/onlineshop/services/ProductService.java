@@ -2,7 +2,7 @@ package org.onlineshop.services;
 
 import org.onlineshop.dao.ProductDao;
 import org.onlineshop.dto.ProductDto;
-import org.onlineshop.dto.utility.ProductMapper;
+import org.onlineshop.dto.mappers.ProductMapper;
 import org.onlineshop.model.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,7 +1,5 @@
 package org.onlineshop.config;
 
-import org.onlineshop.db.ConnectionPool;
-import org.onlineshop.db.CustomUserDetailsService;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

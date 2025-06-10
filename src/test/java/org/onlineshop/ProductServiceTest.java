@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.ProductDao;
 import org.onlineshop.dto.ProductDto;
-import org.onlineshop.dto.utility.ProductMapper;
+import org.onlineshop.dto.mappers.ProductMapper;
 import org.onlineshop.model.Product;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

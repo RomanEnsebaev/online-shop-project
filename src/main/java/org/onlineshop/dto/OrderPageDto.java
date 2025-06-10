@@ -1,4 +1,4 @@
-package org.onlineshop.dto.order;
+package org.onlineshop.dto;
 
 import java.util.List;
 

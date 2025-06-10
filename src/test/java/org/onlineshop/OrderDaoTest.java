@@ -5,13 +5,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.OrderDao;
-import org.onlineshop.db.ConnectionPool;
-import org.onlineshop.dto.order.OrderDto;
-import org.onlineshop.dto.order.OrderItemDto;
-import org.mockito.ArgumentCaptor;
+import org.onlineshop.config.ConnectionPool;
+import org.onlineshop.dto.OrderDto;
+import org.onlineshop.dto.OrderItemDto;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.onlineshop.model.Order;
+import org.onlineshop.model.OrderItem;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -71,7 +72,13 @@ class OrderDaoTest {
      */
     @Test
     void shouldBatchInsertOrderItemsWhenSaveOrderItemsCalled() throws Exception {
-        OrderItemDto item = new OrderItemDto(5, "n", 2, new BigDecimal("3.00"));
+        OrderItem item = new OrderItem();
+
+        item.setOrderId(7);
+        item.setProductId(5);
+        item.setProductName("n");
+        item.setQuantity(2);
+        item.setPrice(new BigDecimal("3.00"));
         when(connection.prepareStatement(anyString())).thenReturn(ps);
 
         dao.saveOrderItems(7, List.of(item, item));
@@ -104,7 +111,7 @@ class OrderDaoTest {
         when(rs.getTimestamp("created_at")).thenReturn(ts);
         when(rs.getBigDecimal("total")).thenReturn(new BigDecimal("20.00"));
 
-        List<OrderDto> list = dao.findOrderHeadersByUserId(3, 5, 0);
+        List<Order> list = dao.findOrderHeadersByUserId(3, 5, 0);
 
         assertEquals(1, list.size());
         assertEquals(50, list.get(0).getId());
@@ -137,7 +144,7 @@ class OrderDaoTest {
         when(rs.getInt("qty")).thenReturn(3);
         when(rs.getBigDecimal("price_at_purchase")).thenReturn(new BigDecimal("9.99"));
 
-        List<OrderItemDto> items = dao.findOrderItemsByOrderId(4);
+        List<OrderItem> items = dao.findOrderItemsByOrderId(4);
 
         assertEquals(1, items.size());
         assertEquals(8, items.get(0).getProductId());

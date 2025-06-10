@@ -1,12 +1,8 @@
 package org.onlineshop.config;
 
-import org.onlineshop.db.ConnectionPool;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
-
-import java.sql.SQLException;
 
 @Configuration
 @PropertySource("classpath:application.properties")

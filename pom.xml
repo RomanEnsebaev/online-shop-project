@@ -28,7 +28,6 @@
               <goal>report</goal>
             </goals>
             <configuration>
-              <!-- включаем в отчёт только dao и services -->
               <includes>
                 <include>org/onlineshop/dao/**</include>
                 <include>org/onlineshop/services/**</include>

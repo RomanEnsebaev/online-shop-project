@@ -5,12 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.CartDao;
-import org.onlineshop.db.ConnectionPool;
+import org.onlineshop.config.ConnectionPool;
 import org.onlineshop.dto.CartItemDto;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.onlineshop.model.CartItem;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -23,17 +24,27 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CartDaoTest {
 
-    @Mock ConnectionPool pool;
-    @Mock Connection connection;
-    @Mock PreparedStatement ps;
-    @Mock ResultSet rs;
-    @InjectMocks @Spy
+    @Mock
+    ConnectionPool pool;
+
+    @Mock
+    Connection connection;
+
+    @Mock
+    PreparedStatement ps;
+
+    @Mock
+    ResultSet rs;
+
+    @InjectMocks
+    @Spy
     CartDao dao;
 
     @BeforeEach
     void init() throws InterruptedException {
         lenient().when(pool.borrow()).thenReturn(connection);
     }
+
 
     /**
      * Должен вернуть существующий cart_id для авторизованного пользователя
@@ -112,6 +123,7 @@ class CartDaoTest {
         verify(pool).release(connection);
     }
 
+
     /**
      * Должен добавить элемент в корзину и обновить количество
      */
@@ -138,6 +150,7 @@ class CartDaoTest {
         verify(pool).release(connection);
     }
 
+
     /**
      * Должен вернуть список позиций корзины с расчётом итоговой стоимости
      */
@@ -151,7 +164,7 @@ class CartDaoTest {
         when(rs.getBigDecimal(3)).thenReturn(new BigDecimal("2.50"), new BigDecimal("3.00"));
         when(rs.getInt(4)).thenReturn(2, 1);
 
-        List<CartItemDto> list = dao.items(5);
+        List<CartItem> list = dao.items(5);
 
         assertEquals(2, list.size());
         assertEquals(10, list.get(0).getProductId());
@@ -168,7 +181,7 @@ class CartDaoTest {
         when(ps.executeQuery()).thenReturn(rs);
         when(rs.next()).thenReturn(false);
 
-        List<CartItemDto> list = dao.items(7);
+        List<CartItem> list = dao.items(7);
 
         assertTrue(list.isEmpty());
         verify(pool).release(connection);
@@ -243,7 +256,7 @@ class CartDaoTest {
         List<CartItemDto> expected = List.of(new CartItemDto());
         doReturn(expected).when(spyDao).items(20);
 
-        List<CartItemDto> result = spyDao.getCartItemsByUserId(2);
+        List<CartItem> result = spyDao.getCartItemsByUserId(2);
 
         assertSame(expected, result);
         verify(connection, never()).prepareStatement(anyString());

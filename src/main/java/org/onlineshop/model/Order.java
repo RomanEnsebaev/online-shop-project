@@ -1,23 +1,14 @@
-package org.onlineshop.dto.order;
+package org.onlineshop.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class OrderDto {
+public class Order {
     private int id;
     private LocalDateTime orderDate;
     private BigDecimal total;
-    private List<OrderItemDto> items;
-
-    public OrderDto() { }
-
-    public OrderDto(int id, LocalDateTime orderDate, BigDecimal total, List<OrderItemDto> items) {
-        this.id = id;
-        this.orderDate = orderDate;
-        this.total = total;
-        this.items = items;
-    }
+    private List<OrderItem> items;
 
     public int getId() {
         return id;
@@ -40,10 +31,10 @@ public class OrderDto {
         this.total = total;
     }
 
-    public List<OrderItemDto> getItems() {
+    public List<OrderItem> getItems() {
         return items;
     }
-    public void setItems(List<OrderItemDto> items) {
+    public void setItems(List<OrderItem> items) {
         this.items = items;
     }
 }

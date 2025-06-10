@@ -1,6 +1,6 @@
 package org.onlineshop.controllers;
 
-import org.onlineshop.dto.order.OrderPageDto;
+import org.onlineshop.dto.OrderPageDto;
 import org.onlineshop.services.OrderService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;

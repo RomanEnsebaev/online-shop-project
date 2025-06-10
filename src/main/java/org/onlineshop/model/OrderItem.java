@@ -1,26 +1,24 @@
-package org.onlineshop.dto.order;
+package org.onlineshop.model;
 
 import java.math.BigDecimal;
 
-public class OrderItemDto {
+public class OrderItem {
+    private int orderId;
     private int productId;
     private String productName;
     private int quantity;
     private BigDecimal price;
 
-    public OrderItemDto() { }
-
-    public OrderItemDto(int productId, String productName, int quantity, BigDecimal price) {
-        this.productId = productId;
-        this.productName = productName;
-        this.quantity = quantity;
-        this.price = price;
+    public int getOrderId() {
+        return orderId;
+    }
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public int getProductId() {
         return productId;
     }
-
     public void setProductId(int productId) {
         this.productId = productId;
     }

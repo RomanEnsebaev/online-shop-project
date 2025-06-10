@@ -5,12 +5,14 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.CartDao;
-import org.onlineshop.db.CustomUserDetails;
+import org.onlineshop.config.CustomUserDetails;
 import org.onlineshop.dto.CartItemDto;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.onlineshop.dto.mappers.CartItemMapper;
+import org.onlineshop.model.CartItem;
 import org.onlineshop.services.CartService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -98,12 +100,21 @@ class CartServiceTest {
 
             when(session.getAttribute("GUEST_TOKEN")).thenReturn("tk");
             when(dao.resolveCart(9, "tk")).thenReturn(30);
-            List<CartItemDto> items = List.of(new CartItemDto());
-            when(dao.items(30)).thenReturn(items);
+
+            CartItem entity = new CartItem();
+            entity.setCartId(30);
+            entity.setProductId(100);
+            entity.setName("Продукт");
+            entity.setPrice(new BigDecimal("42.50"));
+            entity.setQty(3);
+            List<CartItem> entities = List.of(entity);
+            when(dao.items(30)).thenReturn(entities);
+
+            CartItemDto expectedDto = CartItemMapper.toDto(entity);
+            List<CartItemDto> expected = List.of(expectedDto);
 
             List<CartItemDto> result = service.viewCart();
-
-            assertEquals(items, result);
+            assertEquals(expected, result);
         }
     }
 
@@ -125,8 +136,23 @@ class CartServiceTest {
             when(session.getAttribute("GUEST_TOKEN")).thenReturn("gt");
             doNothing().when(dao).mergeCarts("gt", 4);
             when(dao.resolveCart(4, null)).thenReturn(40);
-            List<CartItemDto> list = List.of(new CartItemDto(), new CartItemDto());
-            when(dao.items(40)).thenReturn(list);
+
+            CartItem e1 = new CartItem();
+            e1.setCartId(40);
+            e1.setProductId(101);
+            e1.setName("Product A");
+            e1.setPrice(new BigDecimal("10.00"));
+            e1.setQty(1);
+
+            CartItem e2 = new CartItem();
+            e2.setCartId(40);
+            e2.setProductId(102);
+            e2.setName("Product B");
+            e2.setPrice(new BigDecimal("20.00"));
+            e2.setQty(2);
+
+            List<CartItem> entities = List.of(e1, e2);
+            when(dao.items(40)).thenReturn(entities);
 
             service.mergeAfterLogin();
 

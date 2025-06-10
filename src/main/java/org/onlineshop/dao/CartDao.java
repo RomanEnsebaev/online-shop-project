@@ -1,7 +1,8 @@
 package org.onlineshop.dao;
 
-import org.onlineshop.db.ConnectionPool;
+import org.onlineshop.config.ConnectionPool;
 import org.onlineshop.dto.CartItemDto;
+import org.onlineshop.model.CartItem;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -83,7 +84,7 @@ public class CartDao {
         } finally { pool.release(c); }
     }
 
-    public List<CartItemDto> items(int cartId)
+    public List<CartItem> items(int cartId)
             throws SQLException, InterruptedException {
 
         String sql = """
@@ -92,20 +93,20 @@ public class CartDao {
             JOIN products p ON p.product_id = ci.product_id
             WHERE ci.cart_id = ?
             """;
-        List<CartItemDto> list = new ArrayList<>();
+        List<CartItem> list = new ArrayList<>();
         Connection c = pool.borrow();
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, cartId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                CartItemDto d = new CartItemDto();
-                d.setProductId(rs.getInt(1));
-                d.setName(rs.getString(2));
-                d.setPrice(rs.getBigDecimal(3));
-                d.setQty(rs.getInt(4));
-                d.setLineTotal(d.getPrice().multiply(
-                        new java.math.BigDecimal(d.getQty())));
-                list.add(d);
+                CartItem item  = new CartItem();
+                item .setProductId(rs.getInt(1));
+                item .setName(rs.getString(2));
+                item .setPrice(rs.getBigDecimal(3));
+                item .setQty(rs.getInt(4));
+                item .setLineTotal(item .getPrice().multiply(
+                        new java.math.BigDecimal(item .getQty())));
+                list.add(item );
             }
         } finally { pool.release(c); }
         return list;
@@ -133,9 +134,29 @@ public class CartDao {
         }
     }
 
-    public List<CartItemDto> getCartItemsByUserId(int userId)
+    public List<CartItem> getCartItemsByUserId(int userId)
             throws SQLException, InterruptedException {
         int cartId = resolveCart(userId, null);
         return items(cartId);
+    }
+
+    public void deleteEmptyCartById(int cartId) throws InterruptedException {
+        String sql = """
+        DELETE FROM cart
+        WHERE cart_id = ?
+          AND NOT EXISTS (
+            SELECT 1 FROM cart_item ci
+             WHERE ci.cart_id = cart.cart_id
+          )
+        """;
+        Connection c = pool.borrow();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, cartId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Ошибка при удалении пустой корзины " + cartId, e);
+        } finally {
+            pool.release(c);
+        }
     }
 }

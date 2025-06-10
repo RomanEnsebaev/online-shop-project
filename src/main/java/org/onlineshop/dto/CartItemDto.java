@@ -1,19 +1,21 @@
 package org.onlineshop.dto;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class CartItemDto {
-    private int productId;
+    private Integer productId;
     private String name;
     private BigDecimal price;
     private int qty;
     private BigDecimal lineTotal;
 
-    public int getProductId() {
+
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
@@ -47,5 +49,22 @@ public class CartItemDto {
 
     public void setLineTotal(BigDecimal lineTotal) {
         this.lineTotal = lineTotal;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CartItemDto)) return false;
+        CartItemDto that = (CartItemDto) o;
+        return qty == that.qty
+                && Objects.equals(productId, that.productId)
+                && Objects.equals(name, that.name)
+                && Objects.equals(price, that.price)
+                && Objects.equals(lineTotal, that.lineTotal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId, name, price, qty, lineTotal);
     }
 }

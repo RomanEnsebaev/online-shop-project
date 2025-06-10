@@ -1,11 +1,9 @@
-package org.onlineshop.dto.utility;
+package org.onlineshop.dto.mappers;
 
 import org.onlineshop.dto.ProductDto;
 import org.onlineshop.model.Product;
 
-public class ProductMapper {
-
-    private ProductMapper() {}
+public class ProductMapper{
 
     public static ProductDto toDto(Product p) {
         ProductDto d = new ProductDto();

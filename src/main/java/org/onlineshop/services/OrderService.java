@@ -2,11 +2,15 @@ package org.onlineshop.services;
 
 import org.onlineshop.dao.CartDao;
 import org.onlineshop.dao.OrderDao;
-import org.onlineshop.db.CustomUserDetails;
+import org.onlineshop.config.CustomUserDetails;
 import org.onlineshop.dto.CartItemDto;
-import org.onlineshop.dto.order.OrderDto;
-import org.onlineshop.dto.order.OrderItemDto;
-import org.onlineshop.dto.order.OrderPageDto;
+import org.onlineshop.dto.OrderDto;
+import org.onlineshop.dto.OrderItemDto;
+import org.onlineshop.dto.OrderPageDto;
+import org.onlineshop.dto.mappers.OrderMapper;
+import org.onlineshop.model.CartItem;
+import org.onlineshop.model.Order;
+import org.onlineshop.model.OrderItem;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -39,35 +44,36 @@ public class OrderService {
     public void placeOrder() throws SQLException, InterruptedException {
         int userId = getCurrentUserId();
 
-        List<CartItemDto> cartItems = cartDao.getCartItemsByUserId(userId);
+        List<CartItem> cartItems = cartDao.getCartItemsByUserId(userId);
         if (cartItems == null || cartItems.isEmpty()) {
             return;
         }
 
-        BigDecimal total = BigDecimal.ZERO;
-        for (CartItemDto ci : cartItems) {
-            BigDecimal line = ci.getPrice().multiply(BigDecimal.valueOf(ci.getQty()));
-            total = total.add(line);
-        }
+        BigDecimal total = cartItems.stream()
+                .map(ci -> ci.getPrice().multiply(
+                        BigDecimal.valueOf(ci.getQty())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         int orderId = orderDao.saveOrder(userId, total);
 
-        List<OrderItemDto> itemsToSave = new ArrayList<>();
-        for (CartItemDto ci : cartItems) {
-            OrderItemDto oItem = new OrderItemDto(
-                    ci.getProductId(),
-                    ci.getName(),
-                    ci.getQty(),
-                    ci.getPrice()
-            );
-            itemsToSave.add(oItem);
-        }
-        orderDao.saveOrderItems(orderId, itemsToSave);
+        List<OrderItem> orderItems = cartItems.stream()
+                .map(ci -> {
+                    OrderItem oi = new OrderItem();
+                    oi.setOrderId(orderId);
+                    oi.setProductId(ci.getProductId());
+                    oi.setProductName(ci.getName());
+                    oi.setQuantity(ci.getQty());
+                    oi.setPrice(ci.getPrice());
+                    return oi;
+                })
+                .collect(Collectors.toList());
+
+        orderDao.saveOrderItems(orderId, orderItems);
 
         cartService.clearCart(userId);
     }
 
-    public OrderPageDto  getOrdersForCurrentUser(int pageNum, int pageSize) throws SQLException, InterruptedException {
+    public OrderPageDto getOrdersForCurrentUser(int pageNum, int pageSize) throws SQLException, InterruptedException {
         int userId = getCurrentUserId();
 
         int totalOrders = orderDao.countOrdersByUserId(userId);
@@ -81,15 +87,16 @@ public class OrderService {
         } else if (pageNum > totalPages) {
             pageNum = totalPages;
         }
-
         int offset = (pageNum - 1) * pageSize;
 
-        List<OrderDto> headers = orderDao.findOrderHeadersByUserId(userId, pageSize, offset);
-
-        for (OrderDto header : headers) {
-            List<OrderItemDto> items = orderDao.findOrderItemsByOrderId(header.getId());
-            header.setItems(items);
+        List<Order> entities = orderDao.findOrderHeadersByUserId(userId, pageSize, offset);
+        for (Order o : entities) {
+            o.setItems(orderDao.findOrderItemsByOrderId(o.getId()));
         }
+
+        List<OrderDto> headers = entities.stream()
+                .map(OrderMapper::toDto)
+                .collect(Collectors.toList());
 
         OrderPageDto pageDto = new OrderPageDto();
         pageDto.setOrders(headers);
