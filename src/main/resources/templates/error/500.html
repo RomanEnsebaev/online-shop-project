@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{error.500.title}">500 — Внутренняя ошибка сервера</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        h1 { font-size: 4em; margin: 0; }
+        p { font-size: 1.2em; color: #666; }
+        .details { margin-top: 20px; font-size: 0.9em; color: #aaa; }
+        a { display: inline-block; margin-top: 20px; text-decoration: none; color: #337ab7; }
+    </style>
+</head>
+<body>
+<h1 th:text="#{error.500.title}">500 — Внутренняя ошибка сервера</h1>
+<p th:text="#{error.500.message}">Произошла внутренняя ошибка сервера.</p>
+<div class="details">
+    <p th:text="#{error.500.details(${errorMessage})}">
+        Текст ошибки: …
+    </p>
+</div>
+<a th:href="@{/}" th:text="#{link.home}">← На главную</a>
+</body>
+</html>

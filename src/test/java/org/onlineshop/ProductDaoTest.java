@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.ProductDao;
-import org.onlineshop.config.ConnectionPool;
+import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Product;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

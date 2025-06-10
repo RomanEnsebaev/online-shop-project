@@ -1,4 +1,4 @@
-package org.onlineshop.config;
+package org.onlineshop.config.listener;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.annotation.WebListener;

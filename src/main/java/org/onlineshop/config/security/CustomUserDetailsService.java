@@ -1,5 +1,6 @@
-package org.onlineshop.config;
+package org.onlineshop.config.security;
 
+import org.onlineshop.config.database.ConnectionPool;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

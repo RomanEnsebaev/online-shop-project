@@ -1,7 +1,6 @@
 package org.onlineshop.dao;
 
-import org.onlineshop.config.ConnectionPool;
-import org.onlineshop.dto.CartItemDto;
+import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.CartItem;
 import org.springframework.stereotype.Repository;
 

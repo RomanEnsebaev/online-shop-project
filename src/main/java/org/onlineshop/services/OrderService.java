@@ -2,10 +2,8 @@ package org.onlineshop.services;
 
 import org.onlineshop.dao.CartDao;
 import org.onlineshop.dao.OrderDao;
-import org.onlineshop.config.CustomUserDetails;
-import org.onlineshop.dto.CartItemDto;
+import org.onlineshop.config.security.CustomUserDetails;
 import org.onlineshop.dto.OrderDto;
-import org.onlineshop.dto.OrderItemDto;
 import org.onlineshop.dto.OrderPageDto;
 import org.onlineshop.dto.mappers.OrderMapper;
 import org.onlineshop.model.CartItem;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

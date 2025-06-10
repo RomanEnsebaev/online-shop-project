@@ -1,6 +1,6 @@
 package org.onlineshop.dao;
 
-import org.onlineshop.config.ConnectionPool;
+import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Product;
 import org.springframework.stereotype.Repository;
 

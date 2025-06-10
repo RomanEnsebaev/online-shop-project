@@ -1,5 +1,8 @@
-package org.onlineshop.config;
+package org.onlineshop.config.webMVC;
 
+import jakarta.servlet.ServletRegistration;
+import org.onlineshop.config.database.JdbcConfig;
+import org.onlineshop.config.security.SecurityConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -16,5 +19,12 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     @Override
     protected String[] getServletMappings() {
         return new String[] { "/" };
+    }
+
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration){
+        registration.setInitParameter(
+                "throwExceptionIfNoHandlerFound", "true"
+        );
     }
 }

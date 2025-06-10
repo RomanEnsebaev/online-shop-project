@@ -3,7 +3,7 @@ package org.onlineshop.services;
 import jakarta.servlet.http.HttpSession;
 import org.onlineshop.dao.CartDao;
 import org.onlineshop.dto.CartItemDto;
-import org.onlineshop.config.CustomUserDetails;
+import org.onlineshop.config.security.CustomUserDetails;
 import org.onlineshop.dto.mappers.CartItemMapper;
 import org.onlineshop.model.CartItem;
 import org.springframework.security.core.Authentication;

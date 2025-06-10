@@ -1,6 +1,6 @@
 package org.onlineshop.controllers;
 
-import org.onlineshop.config.CustomUserDetails;
+import org.onlineshop.config.security.CustomUserDetails;
 import org.onlineshop.dto.CartItemDto;
 import org.onlineshop.services.CartService;
 import org.springframework.http.ResponseEntity;

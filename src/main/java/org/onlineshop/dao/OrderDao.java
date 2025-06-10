@@ -1,8 +1,6 @@
 package org.onlineshop.dao;
 
-import org.onlineshop.config.ConnectionPool;
-import org.onlineshop.dto.OrderDto;
-import org.onlineshop.dto.OrderItemDto;
+import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Order;
 import org.onlineshop.model.OrderItem;
 import org.springframework.stereotype.Repository;

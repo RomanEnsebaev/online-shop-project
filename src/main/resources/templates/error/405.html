@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{error.405.title}">405 — Метод не поддерживается</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        h1 { font-size: 4em; margin: 0; }
+        p { font-size: 1.2em; color: #666; }
+        a { display: inline-block; margin-top: 20px; text-decoration: none; color: #337ab7; }
+    </style>
+</head>
+<body>
+<h1 th:text="#{error.405.title}">405 — Метод не поддерживается</h1>
+<p th:text="#{error.405.message(${method})}">
+    Метод «GET» не поддерживается.
+</p>
+<a th:href="@{/}" th:text="#{link.home}">← На главную</a>
+</body>
+</html>

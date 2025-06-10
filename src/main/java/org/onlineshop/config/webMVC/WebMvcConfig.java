@@ -1,6 +1,5 @@
-package org.onlineshop.config;
+package org.onlineshop.config.webMVC;
 
-import jakarta.servlet.http.HttpSessionListener;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;

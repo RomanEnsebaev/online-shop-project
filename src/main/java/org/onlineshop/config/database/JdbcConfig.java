@@ -1,4 +1,4 @@
-package org.onlineshop.config;
+package org.onlineshop.config.database;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;

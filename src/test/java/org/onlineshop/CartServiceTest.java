@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.onlineshop.dao.CartDao;
-import org.onlineshop.config.CustomUserDetails;
+import org.onlineshop.config.security.CustomUserDetails;
 import org.onlineshop.dto.CartItemDto;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

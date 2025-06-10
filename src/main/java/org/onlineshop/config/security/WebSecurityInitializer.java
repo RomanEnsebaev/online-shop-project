@@ -1,4 +1,4 @@
-package org.onlineshop.config;
+package org.onlineshop.config.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 

@@ -1,5 +1,6 @@
-package org.onlineshop.config;
+package org.onlineshop.config.security;
 
+import org.onlineshop.config.database.ConnectionPool;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -46,7 +47,7 @@ public class SecurityConfig {
                 .authenticationProvider(dao)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/cart", "/register", "/login",
+                        .requestMatchers("/", "/register", "/login",
                                 "/css/**", "/js/**", "/images/**","/changeLanguage").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**")).hasAuthority("ADMIN")
                         .anyRequest().authenticated()
