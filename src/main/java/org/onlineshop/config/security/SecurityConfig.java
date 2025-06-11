@@ -16,7 +16,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 

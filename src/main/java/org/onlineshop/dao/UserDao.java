@@ -3,6 +3,8 @@ package org.onlineshop.dao;
 import org.onlineshop.config.database.ConnectionPool;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.sql.SQLException;
@@ -11,6 +13,7 @@ import java.sql.SQLException;
 public class UserDao {
     private final ConnectionPool pool;
     private final PasswordEncoder encoder;
+    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 
     public UserDao(ConnectionPool pool, PasswordEncoder encoder) {
         this.pool = pool;
@@ -26,8 +29,9 @@ public class UserDao {
                 ps.setString(2, encoder.encode(rawPassword));
                 ps.executeUpdate();
             } finally { pool.release(c); }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("UserDao.saveUser failed for username={}", username, ex);
+            throw new RuntimeException("Не удалось сохранить пользователя", ex);
         }
     }
 
@@ -39,8 +43,9 @@ public class UserDao {
                 ps.setString(1, username);
                 try (ResultSet rs = ps.executeQuery()) { return rs.next(); }
             } finally { pool.release(c); }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("UserDao.exists failed for username={}", username, ex);
+            throw new RuntimeException("Ошибка проверки существования пользователя", ex);
         }
     }
 }

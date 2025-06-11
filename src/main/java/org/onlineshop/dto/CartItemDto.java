@@ -1,13 +1,26 @@
 package org.onlineshop.dto;
 
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class CartItemDto {
+    @NotNull
     private Integer productId;
+
+    @NotBlank
     private String name;
+
+    @NotNull
+    @DecimalMin(value = "0.01", inclusive = true)
     private BigDecimal price;
+
+    @Min(1)
     private int qty;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal lineTotal;
 
 

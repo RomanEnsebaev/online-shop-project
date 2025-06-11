@@ -3,6 +3,8 @@ package org.onlineshop.dao;
 import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Product;
 import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
 @Repository
 public class ProductDao {
     private final ConnectionPool pool;
+    private static final Logger log = LoggerFactory.getLogger(ProductDao.class);
 
     public ProductDao(ConnectionPool pool) {
         this.pool = pool;
@@ -28,8 +31,9 @@ public class ProductDao {
 
                 while (rs.next()) list.add(map(rs));
             } finally { pool.release(c); }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("ProductDao.findAllActive failed", ex);
+            throw new RuntimeException("Ошибка при получении списка продуктов", ex);
         }
         return list;
     }
@@ -51,8 +55,9 @@ public class ProductDao {
             } finally {
                 pool.release(c);
             }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("ProductDao.save failed for product={}", p, ex);
+            throw new RuntimeException("Ошибка при сохранении продукта", ex);
         }
     }
 
@@ -77,8 +82,9 @@ public class ProductDao {
                 ps.setInt      (6, p.getProductId());
                 ps.executeUpdate();
             } finally { pool.release(c); }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("ProductDao.update failed for productId={}", p.getProductId(), ex);
+            throw new RuntimeException("Ошибка при обновлении продукта", ex);
         }
     }
 
@@ -90,8 +96,9 @@ public class ProductDao {
                 ps.setInt(1, id);
                 ps.executeUpdate();
             } finally { pool.release(c); }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("ProductDao.delete failed for productId={}", id, ex);
+            throw new RuntimeException("Ошибка при удалении продукта", ex);
         }
     }
 
@@ -105,8 +112,9 @@ public class ProductDao {
                     return rs.next() ? map(rs) : null;
                 }
             } finally { pool.release(c); }
-        } catch (SQLException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | InterruptedException ex) {
+            log.error("ProductDao.find failed for productId={}", id, ex);
+            throw new RuntimeException("Ошибка при поиске продукта", ex);
         }
     }
 

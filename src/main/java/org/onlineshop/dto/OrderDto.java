@@ -1,14 +1,27 @@
 package org.onlineshop.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderDto {
+
+    @Positive
     private int id;
+
+    @NotNull
     private LocalDateTime orderDate;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = true)
     private BigDecimal total;
-    private List<OrderItemDto> items;
+
+    @NotNull
+    @Size(min = 1)
+    private List<@Valid OrderItemDto> items;
 
     public OrderDto() { }
 

@@ -9,6 +9,8 @@ import org.onlineshop.model.CartItem;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @Service
 public class CartService {
 
+    private static final Logger log = LoggerFactory.getLogger(CartService.class);
     private final CartDao dao;
     private final HttpSession session;
 
@@ -27,18 +30,28 @@ public class CartService {
     }
 
     public void addToCart(int productId) throws SQLException, InterruptedException {
-        int id = dao.resolveCart(currentUserId(), guestToken());
-        dao.addItem(id, productId, 1);
-        session.setAttribute("cartCount",
-                (Integer) Optional.ofNullable(session.getAttribute("cartCount")).orElse(0) + 1);
+        try {
+            int id = dao.resolveCart(currentUserId(), guestToken());
+            dao.addItem(id, productId, 1);
+            session.setAttribute("cartCount",
+                    (Integer) Optional.ofNullable(session.getAttribute("cartCount")).orElse(0) + 1);
+        } catch (InterruptedException ex) {
+            log.error("CartService.addItemToCart failed (productId={})", productId, ex);
+            throw new RuntimeException("Не удалось добавить товар в корзину. Попробуйте позже.", ex);
+        }
     }
 
-    public List<CartItemDto> viewCart() throws SQLException, InterruptedException {
-        int id = dao.resolveCart(currentUserId(), guestToken());
-        List<CartItem> items = dao.items(id);
-        return items.stream()
-                .map(CartItemMapper::toDto)
-                .toList();
+    public List<CartItemDto> viewCart() throws InterruptedException, SQLException {
+        try {
+            int id = dao.resolveCart(currentUserId(), guestToken());
+            List<CartItem> items = dao.items(id);
+            return items.stream()
+                    .map(CartItemMapper::toDto)
+                    .toList();
+        } catch (RuntimeException ex) {
+            log.error("CartService.viewCart failed for userId={}", currentUserId(), ex);
+            throw new RuntimeException("Не удалось загрузить корзину. Попробуйте позже.", ex);
+        }
     }
 
     public void mergeAfterLogin() throws SQLException, InterruptedException {

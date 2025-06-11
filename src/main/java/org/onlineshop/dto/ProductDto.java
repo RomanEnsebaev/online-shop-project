@@ -1,13 +1,25 @@
 package org.onlineshop.dto;
 
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ProductDto {
     private Integer id;
+
+    @NotBlank
+    @Size(max = 100)
     private String  name;
+
+    @Size(max = 1000)
     private String  description;
+
+    @NotNull
+    @DecimalMin(value = "0.01", inclusive = true)
     private BigDecimal price;
+
+    @Min(0)
     private int stockQty;
     private boolean active;
     private LocalDateTime createdAt;

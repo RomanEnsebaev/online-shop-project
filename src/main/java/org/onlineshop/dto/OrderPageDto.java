@@ -1,10 +1,19 @@
 package org.onlineshop.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+
 import java.util.List;
 
 public class OrderPageDto {
-    private List<OrderDto> orders;
+
+    @NotNull
+    private List<@Valid OrderDto> orders;
+
+    @Min(0)
     private int currentPage;
+
+    @Min(1)
     private int totalPages;
 
     public OrderPageDto() {}

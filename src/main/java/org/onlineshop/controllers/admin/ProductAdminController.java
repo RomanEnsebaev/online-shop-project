@@ -3,6 +3,8 @@ package org.onlineshop.controllers.admin;
 import jakarta.validation.Valid;
 import org.onlineshop.dto.ProductDto;
 import org.onlineshop.services.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class ProductAdminController {
 
     private final ProductService products;
+    private static final Logger log = LoggerFactory.getLogger(ProductAdminController.class);
 
     public ProductAdminController(ProductService products) {
         this.products = products;
@@ -25,6 +28,7 @@ public class ProductAdminController {
 
     @GetMapping("/new")
     public String form(Model m) {
+        log.info("ProductAdminController.list");
         m.addAttribute("productDto", new ProductDto());
         m.addAttribute("formAction", "/admin/products/save");
         return "product_form";

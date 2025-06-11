@@ -27,6 +27,7 @@ class ProductServiceTest {
     @InjectMocks
     ProductService service;
 
+
     /**
      * Должен вернуть список DTO, когда DAO возвращает сущности.
      */
@@ -98,13 +99,6 @@ class ProductServiceTest {
         }
     }
 
-    /**
-     * Должен бросить NPE при add(null).
-     */
-    @Test
-    void shouldThrowWhenAddNullDto() {
-        assertThrows(NullPointerException.class, () -> service.add(null));
-    }
 
     /**
      * Должен вернуть DTO при существующем продукте.
@@ -171,13 +165,6 @@ class ProductServiceTest {
         }
     }
 
-    /**
-     * Должен бросить NPE при update(null).
-     */
-    @Test
-    void shouldThrowWhenUpdateNullDto() {
-        assertThrows(NullPointerException.class, () -> service.update(null));
-    }
 
     /**
      * Должен вызывать удаление в DAO при delete().

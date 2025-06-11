@@ -3,6 +3,8 @@ package org.onlineshop.dao;
 import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.CartItem;
 import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,11 +13,11 @@ import java.util.List;
 @Repository
 public class CartDao {
     private final ConnectionPool pool;
+    private static final Logger log = LoggerFactory.getLogger(CartDao.class);
 
     public CartDao(ConnectionPool pool) { this.pool = pool; }
 
-    public int resolveCart(Integer userId, String sessionId)
-            throws SQLException, InterruptedException {
+    public int resolveCart(Integer userId, String sessionId) throws InterruptedException, SQLException {
 
         String findSql = "SELECT cart_id FROM carts WHERE "
                 + (userId != null ? "user_id = ?" : "session_id = ?");
@@ -34,11 +36,14 @@ public class CartDao {
                 rs.next();
                 return rs.getInt(1);
             }
+        } catch (SQLException ex) {
+            log.error("CartDao.resolveCart failed (sessionId={}, userId={})", sessionId, userId, ex);
+            throw new SQLException("Ошибка доступа к данным корзины", ex);
         } finally { pool.release(c); }
     }
 
     public void mergeCarts(String sessionId, int userId)
-            throws SQLException, InterruptedException {
+            throws InterruptedException, SQLException {
 
         String sql = """
             WITH guest AS (
@@ -62,11 +67,14 @@ public class CartDao {
             ps.setInt   (2, userId);
             ps.setString(3, sessionId);
             ps.executeUpdate();
+        } catch (SQLException ex) {
+            log.error("CartDao.mergeCarts failed (sessionId={}, userId={})", sessionId, userId, ex);
+            throw new SQLException("Ошибка при объединении корзин", ex);
         } finally { pool.release(c); }
     }
 
     public void addItem(int cartId, int productId, int qty)
-            throws SQLException, InterruptedException {
+            throws InterruptedException, SQLException {
 
         String sql = """
             INSERT INTO cart_items(cart_id, product_id, qty)
@@ -80,11 +88,14 @@ public class CartDao {
             ps.setInt(2, productId);
             ps.setInt(3, qty);
             ps.executeUpdate();
-        } finally { pool.release(c); }
+        } catch (SQLException  ex) {
+            log.error("CartDao.addItem failed (cartId={}, productId={}, qty={})", cartId, productId, qty, ex);
+            throw new SQLException("Ошибка при добавлении товара в корзину", ex);
+        }finally { pool.release(c); }
     }
 
     public List<CartItem> items(int cartId)
-            throws SQLException, InterruptedException {
+            throws InterruptedException, SQLException {
 
         String sql = """
             SELECT p.product_id, p.name, p.price, ci.qty
@@ -107,36 +118,50 @@ public class CartDao {
                         new java.math.BigDecimal(item .getQty())));
                 list.add(item );
             }
-        } finally { pool.release(c); }
+        } catch (SQLException ex) {
+            log.error("CartDao.items failed for cartId={}", cartId, ex);
+            throw new SQLException("Ошибка при получении товаров корзины", ex);
+        }finally { pool.release(c); }
         return list;
     }
 
     public void deleteItem(int cartId, int productId)
-            throws SQLException, InterruptedException {
+            throws InterruptedException, SQLException {
         Connection c = pool.borrow();
         try (PreparedStatement ps = c.prepareStatement(
                 "DELETE FROM cart_items WHERE cart_id=? AND product_id=?")) {
             ps.setInt(1, cartId);
             ps.setInt(2, productId);
             ps.executeUpdate();
+        } catch (SQLException ex) {
+            log.error("CartDao.deleteItem failed (cartId={}, productId={})", cartId, productId, ex);
+            throw new SQLException("Ошибка при удалении товара из корзины", ex);
         } finally { pool.release(c); }
     }
 
-    public void clearCartByUserId(int userId) throws SQLException, InterruptedException {
+    public void clearCartByUserId(int userId) throws InterruptedException, SQLException {
         String sql = "DELETE FROM cart_items WHERE cart_id = (SELECT cart_id FROM carts WHERE user_id = ?)";
         Connection c = pool.borrow();
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.executeUpdate();
+        } catch (SQLException ex) {
+            log.error("CartDao.clearCartByUserId failed for userId={}", userId, ex);
+            throw new SQLException("Ошибка при очистке корзины пользователя", ex);
         } finally {
             pool.release(c);
         }
     }
 
     public List<CartItem> getCartItemsByUserId(int userId)
-            throws SQLException, InterruptedException {
-        int cartId = resolveCart(userId, null);
-        return items(cartId);
+            throws InterruptedException, SQLException {
+        try {
+            int cartId = resolveCart(userId, null);
+            return items(cartId);
+        } catch (RuntimeException ex) {
+            log.error("CartDao.getCartItemsByUserId failed for userId={}", userId, ex);
+            throw new RuntimeException("Ошибка при загрузке корзины пользователя", ex);
+        }
     }
 
     public void deleteEmptyCartById(int cartId) throws InterruptedException {
@@ -152,8 +177,9 @@ public class CartDao {
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, cartId);
             ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Ошибка при удалении пустой корзины " + cartId, e);
+        } catch (SQLException ex) {
+            log.error("CartDao.deleteEmptyCartById failed for cartId={}", cartId, ex);
+            throw new RuntimeException("Ошибка при удалении пустой корзины " + cartId, ex);
         } finally {
             pool.release(c);
         }

@@ -4,6 +4,8 @@ import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Order;
 import org.onlineshop.model.OrderItem;
 import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -13,12 +15,13 @@ import java.util.List;
 @Repository
 public class OrderDao {
     private final ConnectionPool pool;
+    private static final Logger log = LoggerFactory.getLogger(OrderDao.class);
 
     public OrderDao(ConnectionPool pool) {
         this.pool = pool;
     }
 
-    public int saveOrder(int userId, BigDecimal total) throws SQLException, InterruptedException {
+    public int saveOrder(int userId, BigDecimal total) throws InterruptedException, SQLException {
         String sql = "INSERT INTO orders (user_id, total) VALUES (?, ?) RETURNING order_id";
 
         Connection c = pool.borrow();
@@ -32,10 +35,13 @@ public class OrderDao {
                     throw new SQLException("Не удалось получить сгенерированный ID заказа");
                 }
             }
+        } catch (SQLException ex) {
+            log.error("OrderDao.saveOrder failed (userId={}, total={})", userId, total, ex);
+            throw new SQLException("Ошибка при сохранении заказа", ex);
         } finally { pool.release(c); }
     }
 
-    public void saveOrderItems(int orderId, List<OrderItem> items) throws SQLException, InterruptedException {
+    public void saveOrderItems(int orderId, List<OrderItem> items) throws InterruptedException, SQLException {
         String sql = "INSERT INTO order_items (order_id, product_id, qty, price_at_purchase) VALUES (?, ?, ?, ?)";
         Connection c = pool.borrow();
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -47,10 +53,13 @@ public class OrderDao {
                 ps.addBatch();
             }
             ps.executeBatch();
+        } catch (SQLException  ex) {
+            log.error("OrderDao.saveOrderItems failed for orderId={}", orderId, ex);
+            throw new SQLException("Ошибка при сохранении позиций заказа", ex);
         } finally { pool.release(c); }
     }
 
-    public List<Order> findOrderHeadersByUserId(int userId, int limit, int offset) throws SQLException, InterruptedException {
+    public List<Order> findOrderHeadersByUserId(int userId, int limit, int offset) throws InterruptedException {
         String sql = "SELECT order_id, created_at, total FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
         List<Order> headers = new ArrayList<>();
 
@@ -69,12 +78,15 @@ public class OrderDao {
                     headers.add(header);
                 }
             }
+        } catch (SQLException ex) {
+            log.error("OrderDao.findOrderHeadersByUserId failed (userId={}, limit={}, offset={})", userId, limit, offset, ex);
+            throw new RuntimeException("Ошибка при получении заголовков заказов", ex);
         } finally { pool.release(c); }
 
         return headers;
     }
 
-    public List<OrderItem> findOrderItemsByOrderId(int orderId) throws SQLException, InterruptedException{
+    public List<OrderItem> findOrderItemsByOrderId(int orderId) throws  InterruptedException{
         String sql = "SELECT oi.product_id, p.name as product_name, oi.qty, oi.price_at_purchase " +
                 "FROM order_items as oi " +
                 "JOIN products as p ON oi.product_id = p.product_id " +
@@ -95,11 +107,14 @@ public class OrderDao {
                     items.add(it);
                 }
             }
+        } catch (SQLException ex) {
+            log.error("OrderDao.findOrderItemsByOrderId failed for orderId={}", orderId, ex);
+            throw new RuntimeException("Ошибка при получении позиций заказа", ex);
         } finally { pool.release(c); }
         return items;
     }
 
-    public int countOrdersByUserId(int userId) throws InterruptedException, SQLException {
+    public int countOrdersByUserId(int userId) throws InterruptedException {
         String sql = "SELECT COUNT(*) AS total_count FROM orders WHERE user_id = ?";
         Connection c = pool.borrow();
         try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -111,6 +126,9 @@ public class OrderDao {
                     return 0;
                 }
             }
+        } catch (SQLException ex) {
+            log.error("OrderDao.countOrdersByUserId failed for userId={}", userId, ex);
+            throw new RuntimeException("Ошибка при подсчёте заказов пользователя", ex);
         } finally {
             pool.release(c);
         }

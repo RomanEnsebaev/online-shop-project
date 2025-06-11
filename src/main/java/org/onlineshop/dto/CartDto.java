@@ -1,16 +1,21 @@
 package org.onlineshop.dto;
 
-import org.onlineshop.model.CartItem;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class CartDto {
+    @NotNull
     private Integer cartId;
+    @NotBlank
     private String sessionId;
     private Integer userId;
+    @NotNull
     private LocalDateTime createdAt;
-    private List<CartItemDto> items;
+    @NotNull
+    private List<@Valid CartItemDto> items;
 
     public Integer getCartId() { return cartId; }
     public void setCartId(Integer cartId) { this.cartId = cartId; }
