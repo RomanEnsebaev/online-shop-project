@@ -24,7 +24,6 @@ import java.util.Locale;
 public class WebMvcConfig implements WebMvcConfigurer {
 
 
-
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();

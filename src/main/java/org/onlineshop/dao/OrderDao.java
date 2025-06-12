@@ -4,8 +4,8 @@ import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Order;
 import org.onlineshop.model.OrderItem;
 import org.springframework.stereotype.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public class OrderDao {
     private final ConnectionPool pool;
-    private static final Logger log = LoggerFactory.getLogger(OrderDao.class);
+    private static final Logger log = LogManager.getLogger(OrderDao.class);
 
     public OrderDao(ConnectionPool pool) {
         this.pool = pool;

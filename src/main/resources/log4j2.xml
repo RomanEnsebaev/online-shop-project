@@ -18,8 +18,12 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="org.onlineshop" level="DEBUG" additivity="false">
+        <Logger name="org.onlineshop" level="DEBUG">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
+
+        <Logger name="org.springframework.web" level="ERROR">
             <AppenderRef ref="File"/>
         </Logger>
 

@@ -1,7 +1,9 @@
 package org.onlineshop.config.exceptions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,7 +12,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LogManager.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ModelAndView handle404(NoHandlerFoundException ex) {
@@ -29,8 +31,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handle500(Exception ex) {
-        log.error("Unhandled exception", ex);
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ModelAndView handle500( Exception ex, HttpServletRequest req) {
+        log.error("Unhandled exception for request [{}]: ",req.getRequestURI(), ex);
         ModelAndView mav = new ModelAndView("error/500");
         mav.addObject("errorMessage", "Произошла техническая ошибка. Попробуйте позже.");
         return mav;

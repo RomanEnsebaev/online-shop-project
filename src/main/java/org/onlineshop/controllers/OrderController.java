@@ -25,7 +25,7 @@ public class OrderController {
     }
 
     @GetMapping("/orders")
-    public String listOrders(Model model, Authentication authentication, @RequestParam(name = "page", defaultValue = "1") int page) throws SQLException, InterruptedException {
+    public String listOrders(Model model, Authentication authentication, @RequestParam(name = "page", defaultValue = "1") int page) throws InterruptedException {
         OrderPageDto pageDto = orderService.getOrdersForCurrentUser(page, pageSize);
         model.addAttribute("pageDto", pageDto);
         return "orders";

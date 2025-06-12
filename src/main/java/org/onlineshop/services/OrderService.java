@@ -12,8 +12,8 @@ import org.onlineshop.model.OrderItem;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -25,7 +25,7 @@ public class OrderService {
     private final OrderDao orderDao;
     private final CartDao cartDao;
     private final CartService cartService;
-    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
+    private static final Logger log = LogManager.getLogger(OrderService.class);
 
     public OrderService(OrderDao orderDao, CartDao cartDao, CartService cartService) {
         this.orderDao = orderDao;

@@ -13,7 +13,7 @@
             товар</a>
     </div>
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        <div class="col" th:each="p : ${products}">
+        <div class="col" th:each="p : ${pageDto.products}">
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${p.name}">Название</h5>
@@ -47,7 +47,23 @@
                 </div>
             </div>
         </div>
+
     </div>
+    <nav th:if="${pageDto.totalPages > 1}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${pageDto.currentPage == 1} ? 'disabled'">
+                <a class="page-link bg-dark text-white border-secondary" th:href="@{/(page=${pageDto.currentPage-1})}"><</a>
+            </li>
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(1, pageDto.totalPages)}"
+                th:classappend="${i == pageDto.currentPage} ? 'active'">
+                <a class="page-link bg-dark text-white border-secondary" th:href="@{/(page=${i})}" th:text="${i}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${pageDto.currentPage == pageDto.totalPages} ? 'disabled'">
+                <a class="page-link bg-dark text-white border-secondary" th:href="@{/(page=${pageDto.currentPage+1})}">></a>
+            </li>
+        </ul>
+    </nav>
 
     <script th:inline="javascript">
 

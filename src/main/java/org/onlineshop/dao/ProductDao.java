@@ -3,8 +3,8 @@ package org.onlineshop.dao;
 import org.onlineshop.config.database.ConnectionPool;
 import org.onlineshop.model.Product;
 import org.springframework.stereotype.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class ProductDao {
     private final ConnectionPool pool;
-    private static final Logger log = LoggerFactory.getLogger(ProductDao.class);
+    private static final Logger log = LogManager.getLogger(ProductDao.class);
 
     public ProductDao(ConnectionPool pool) {
         this.pool = pool;
@@ -116,6 +116,53 @@ public class ProductDao {
             log.error("ProductDao.find failed for productId={}", id, ex);
             throw new RuntimeException("Ошибка при поиске продукта", ex);
         }
+    }
+
+    public int countProducts() throws InterruptedException, SQLException {
+        String sql = "SELECT COUNT(*) AS cnt FROM products";
+        Connection c = pool.borrow();
+        try (PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt("cnt") : 0;
+        } catch (SQLException ex) {
+            log.error("ProductDao.countProducts failed to count products", ex);
+            throw new SQLException("Ошибка при поиске продукта", ex);
+        }
+        finally {
+            pool.release(c);
+        }
+    }
+
+    public List<Product> findProducts(int limit, int offset) throws InterruptedException, SQLException {
+        String sql = """
+        SELECT product_id, name, description, price, stock_qty
+          FROM products
+         ORDER BY product_id
+         LIMIT ? OFFSET ?
+        """;
+        List<Product> list = new ArrayList<>();
+        Connection c = pool.borrow();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = new Product();
+                    p.setProductId(rs.getInt("product_id"));
+                    p.setName(rs.getString("name"));
+                    p.setDescription(rs.getString("description"));
+                    p.setPrice(rs.getBigDecimal("price"));
+                    p.setStockQty(rs.getInt("stock_qty"));
+                    list.add(p);
+                }
+            }
+        } catch (SQLException ex) {
+            log.error("ProductDao.findProducts failed for limit={}, offset={}", limit, offset, ex);
+            throw new SQLException("Ошибка при поиске списка продуктов", ex);
+        } finally {
+            pool.release(c);
+        }
+        return list;
     }
 
     private static Product map(ResultSet rs) throws SQLException {
