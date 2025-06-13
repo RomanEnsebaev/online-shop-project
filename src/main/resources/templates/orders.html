@@ -25,36 +25,45 @@
                 <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
             </div>
             <div class="card-body p-0 border border-2">
-                <table class="table table-striped mb-0">
-                    <thead class="table-light">
-                    <tr>
-                        <th th:text="#{orders.column.name}">Наименование</th>
-                        <th class="text-center" th:text="#{orders.column.quantity}">Количество</th>
-                        <th class="text-end" th:text="#{orders.column.price}">Цена ₸/шт.</th>
-                        <th class="text-end" th:text="#{orders.column.sum}">Сумма ₸</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="item : ${order.items}">
-                        <td th:text="${item.productName}">Наименование товара</td>
-                        <td class="text-center" th:text="${item.quantity}"></td>
-                        <td class="text-end"
-                            th:text="${#numbers.formatDecimal(item.price, 2, 2, 'COMMA')}">
-                        </td>
-                        <td class="text-end"
-                            th:text="${#numbers.formatDecimal(item.price * item.quantity, 2, 2, 'COMMA')}">
-                        </td>
-                    </tr>
-                    </tbody>
-                    <tfoot class="table-light">
-                    <tr>
-                        <td colspan="3" class="text-end fw-bold" th:text="#{orders.footer.total}">Итого:</td>
-                        <td class="text-end fw-bold"
-                            th:text="${#numbers.formatDecimal(order.total, 2, 2, 'COMMA')}">
-                        </td>
-                    </tr>
-                    </tfoot>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0"
+                           style="table-layout: fixed;">
+                        <colgroup>
+                            <col>
+                            <col style="width: 100px;">
+                            <col style="width: 140px;">
+                            <col style="width: 140px;">
+                        </colgroup>
+                        <thead class="table-light">
+                        <tr>
+                            <th th:text="#{orders.column.name}">Наименование</th>
+                            <th class="text-center" th:text="#{orders.column.quantity}">Количество</th>
+                            <th class="text-end" th:text="#{orders.column.price}">Цена ₸/шт.</th>
+                            <th class="text-end" th:text="#{orders.column.sum}">Сумма ₸</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td th:text="${item.productName}">Наименование товара</td>
+                            <td class="text-center" th:text="${item.quantity}"></td>
+                            <td class="text-end"
+                                th:text="${#numbers.formatDecimal(item.price, 2, 2, 'COMMA')}">
+                            </td>
+                            <td class="text-end"
+                                th:text="${#numbers.formatDecimal(item.price * item.quantity, 2, 2, 'COMMA')}">
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot class="table-light">
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold" th:text="#{orders.footer.total}">Итого:</td>
+                            <td class="text-end fw-bold"
+                                th:text="${#numbers.formatDecimal(order.total, 2, 2, 'COMMA')}">
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
